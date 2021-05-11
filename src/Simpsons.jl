@@ -8,6 +8,7 @@ using DataFrames, Polynomials
     has_simpsons_paradox(df, cause_column, effect_column, factor_column)
 
 True if the data ggregated by factor exhibits Simpson's paradox.
+Note that the cause_column and effect_column must be numeric in type.
 example:
     df = DataFrame(
         treatment = ["A", "B", "A", "A", "B", "B"],
@@ -17,11 +18,16 @@ example:
    simpsons_paradox(df, "treatment", "recovery", "kidney_stone_size")
 """
 function has_simpsons_paradox(df, cause_column, effect_column, factor_column, verbose=true)
-    # first do a regression on the cause versus effect columns.
+    # check types of columns as numeric
+    typeof(df[1, cause_column]) <: Number || error("Column $cause_column must be numeric")
+    typeof(df[1, effect_column]) <: Number || error("Column $effect_column must be numeric")
+
+    # Do linear regression on the cause versus effect columns.
     df1 = df[:, [cause_column, effect_column]]
     m = fit(df[!, effect_column], df[!, cause_column], 1)
-    overallslope = sign(m.coeffs[2])
-    # next group by the factor column and do a regression on each group
+    overallslope = m.coeffs[2]
+
+    # Group by the factor_column and do a similar linear regression on each group
     grouped = groupby(df, factor_column)
     subgroupslopes = Float64[]
     for (i, gdf) in enumerate(grouped)
