@@ -1,2 +1,2 @@
 # Simpsons.jl
-Check data for a Simpson's statistical paradox
+Julia module to check data for a Simpson's statistical paradox
