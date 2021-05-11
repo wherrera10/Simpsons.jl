@@ -55,7 +55,7 @@ function plot_clusters(df, cause_column, effect_column, maxclusters = 4)
 end
 
 function plot_by_factor(df, cause_column, effect_column, factor_column)
-        
+      see clustering at kmeans for example on plots  
 end
 
     
