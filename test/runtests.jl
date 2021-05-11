@@ -10,8 +10,8 @@ data = vcat(
 )
 df = DataFrame(Atreatment = [d[1] == "A" ? 1 : 0 for d in data],
                recovery = [d[3] for d in data],
-               kidney_stone_large = [d[2] == "large" ? 1 : 0 for d in data])
+               kidney_stone_size = [d[2] for d in data])
 
-result = has_simpsons_paradox(df, :Atreatment, :recovery, :kidney_stone_large, false)
+result = has_simpsons_paradox(df, :Atreatment, :recovery, :kidney_stone_size, false)
 
 @test result == true
