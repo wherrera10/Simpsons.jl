@@ -7,7 +7,7 @@ using DataFrames, Polynomials
 """
     has_simpsons_paradox(df, cause_column, effect_column, factor_column)
 
-True if the data ggregated by factor exhibits Simpson's paradox.
+True if the data aggregated by factor exhibits Simpson's paradox.
 Note that the cause_column and effect_column must be numeric in type.
 example:
     df = DataFrame(
@@ -18,7 +18,7 @@ example:
    simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
 function has_simpsons_paradox(df, cause_column, effect_column, factor_column, verbose=true)
-    # check types of columns as numeric
+    # check that the cause and effect column data types are numeric
     typeof(df[1, cause_column]) <: Number || error("Column $cause_column must be numeric")
     typeof(df[1, effect_column]) <: Number || error("Column $effect_column must be numeric")
 
