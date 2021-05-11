@@ -1,6 +1,6 @@
 module Simpsons
 
-export has_simpsons_paradox, 
+export has_simpsons_paradox, plot_clusters, plot_by_factor, simpsons_analysis
 
 using DataFrames, Polynomials, Clustering, Plots
 
