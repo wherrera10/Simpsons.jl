@@ -15,7 +15,7 @@ example:
         recovery = [1, 0, 1, 1, 0, 0],
         kidney_stone_size = ["small", "small", "large", "small", "large", "large"])
 
-   simpsons_paradox(df, "treatment", "recovery", "kidney_stone_size")
+   simpsons_paradox(df, :treatment", :recovery", :kidney_stone_size")
 """
 function has_simpsons_paradox(df, cause_column, effect_column, factor_column, verbose=true)
     # check types of columns as numeric
