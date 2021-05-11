@@ -2,7 +2,7 @@ module Simpsons
 
 export has_simpsons_paradox
 
-using DataFrames, Polynomials
+using DataFrames, Polynomials, Clustering
 
 """
     has_simpsons_paradox(df, cause_column, effect_column, factor_column)
@@ -43,5 +43,16 @@ function has_simpsons_paradox(df, cause_column, effect_column, factor_column, ve
     end
     return any(slp -> slp != overallslope, subgroupslopes)
 end
+
+function plotclusters(df, cause_column, effect_column, maxclusters=4)
+    mat = hcat(df[!, cause_column], df[!, effect_column])
+    kresults = [kmeans(mat, cnum) for cnum in 1:maxclusters]
+    plt = plot()
+    for (i, kresult) in enumerate(kresult)
+        # plot each
+        kresult = kmeans(
+    end
+end
+
 
 end  # module Simpsons
