@@ -17,7 +17,7 @@ example:
 
    simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
-function has_simpsons_paradox(df, cause_column, effect_column, factor_column, verbose=true)
+function hasparadox(df, cause_column, effect_column, factor_column, verbose=true)
     # check that the cause and effect column data types are numeric
     typeof(df[1, cause_column]) <: Number || error("Column $cause_column must be numeric")
     typeof(df[1, effect_column]) <: Number || error("Column $effect_column must be numeric")
@@ -54,5 +54,12 @@ function plotclusters(df, cause_column, effect_column, maxclusters=4)
     end
 end
 
+function plotbyfactor(df, cause_column, effect_column, factor_column)
+        
+end
+
+    
+function simpsons_analysis
+    
 
 end  # module Simpsons
