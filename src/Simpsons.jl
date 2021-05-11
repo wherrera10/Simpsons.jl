@@ -1,6 +1,6 @@
 module Simpsons
 
-export has_simpsons_paradox
+export has_simpsons_paradox, 
 
 using DataFrames, Polynomials, Clustering
 
@@ -15,9 +15,9 @@ example:
         recovery = [1, 0, 1, 1, 0, 0],
         kidney_stone_size = ["small", "small", "large", "small", "large", "large"])
 
-   simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
+   has_simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
-function hasparadox(df, cause_column, effect_column, factor_column, verbose=true)
+function has_simpsons_paradox(df, cause_column, effect_column, factor_column, verbose=true)
     # check that the cause and effect column data types are numeric
     typeof(df[1, cause_column]) <: Number || error("Column $cause_column must be numeric")
     typeof(df[1, effect_column]) <: Number || error("Column $effect_column must be numeric")
@@ -44,7 +44,7 @@ function hasparadox(df, cause_column, effect_column, factor_column, verbose=true
     return any(slp -> slp != overallslope, subgroupslopes)
 end
 
-function plotclusters(df, cause_column, effect_column, maxclusters=4)
+function plot_clusters(df, cause_column, effect_column, maxclusters = 4)
     mat = hcat(df[!, cause_column], df[!, effect_column])
     kresults = [kmeans(mat, cnum) for cnum in 1:maxclusters]
     plt = plot()
@@ -54,12 +54,15 @@ function plotclusters(df, cause_column, effect_column, maxclusters=4)
     end
 end
 
-function plotbyfactor(df, cause_column, effect_column, factor_column)
+function plot_by_factor(df, cause_column, effect_column, factor_column)
         
 end
 
     
-function simpsons_analysis
+function simpsons_analysis(df, cause_column, effect_column, show_plots = true)
     
-
+end
+    
+    
+    
 end  # module Simpsons
