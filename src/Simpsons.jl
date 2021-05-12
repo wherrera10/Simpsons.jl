@@ -55,6 +55,13 @@ function has_simpsons_paradox(df, cause_column, effect_column, factor_column, ve
     return any(slp -> slp != overallslope, subgroupslopes)
 end
 
+"""
+    plot_clusters(df, cause_column, effect_column, maxclusters=4)
+
+Plot, with subplots, clustering of the dataframe using caue and effect plotted and
+color coded by clusterings. Use kmeans cluster analysis on all fields of dataframe
+for clusters of size 2 to maxclusters(default 4).
+"""
 function plot_clusters(df, cause_column, effect_column, maxclusters=4)
     # convert non-numeric columns to numeric ones
     df1 = deepcopy(df)
@@ -68,6 +75,12 @@ function plot_clusters(df, cause_column, effect_column, maxclusters=4)
     display(plt)
 end
 
+"""
+    plot_by_factor(df, cause_column, effect_column, factor_column)
+
+Plot, clustering of the dataframe using cause as X, effect Y, with the factor_column
+used for kmeans clustering into 2 clusters on the plot.
+"""
 function plot_by_factor(df, cause_column, effect_column, factor_column)
     df1 = df[:, [cause_column, effect_column, factor_column]]
     df1[:, factor_column] = tointvec(df1[!, factor_column])
@@ -76,10 +89,17 @@ function plot_by_factor(df, cause_column, effect_column, factor_column)
     display(plt)
 end
 
+"""
+    simpsons_analysis(df, cause_column, effect_column, show_plots = true)
+
+Analyze the dataframe df assuming a cause is in cause_column and an effect in
+effect_column of the dataframe. Output data including and Simpson's paradox type
+reversals in subgroups found. Plots shown if show_plots is true (default).
+"""
 function simpsons_analysis(df, cause_column, effect_column, show_plots = true)
-    get / plot cause effect / slope overall
-    plot clusterings
-    for each factor, show / plot clustering and print slope, whether has simpsons
+    # get / plot cause effect / slope overall
+    # plot clusterings
+    # for each factor, show / plot clustering and print slope, whether has simpsons
 end
 
 
