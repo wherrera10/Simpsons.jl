@@ -5,8 +5,20 @@ export has_simpsons_paradox, plot_clusters, plot_by_factor, simpsons_analysis
 using DataFrames, Polynomials, Clustering, Plots
 
 """
-    has_simpsons_paradox(df, cause_column, effect_column, factor_column)
+    tointvec(col::Vector)
 
+Convert the elements of a vector such as a DataFrame column to integers, based on
+their alphabetical order when converted to string. Returns a Vector{Int} if col
+is not numeric in type. Returns a copy of col if col is numeric in type.
+"""
+function tointvec(col::Vector)
+    eltype(col) <: Number && return copy(col)
+    d = Dict(d[s] => i for (i, s) in sort(["$x" for x in col]))
+    return map(s -> d[s], col)
+end
+
+"""
+    has_simpsons_paradox(df, cause_column, effect_column, factor_column)
 True if the data aggregated by factor exhibits Simpson's paradox.
 Note that the cause_column and effect_column must be numeric in type.
 example:
@@ -14,7 +26,6 @@ example:
         treatment = [1, 2, 1, 1, 2, 2],
         recovery = [1, 0, 1, 1, 0, 0],
         kidney_stone_size = ["small", "small", "large", "small", "large", "large"])
-
    has_simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
 function has_simpsons_paradox(df, cause_column, effect_column, factor_column, verbose=true)
@@ -44,27 +55,32 @@ function has_simpsons_paradox(df, cause_column, effect_column, factor_column, ve
     return any(slp -> slp != overallslope, subgroupslopes)
 end
 
-function plot_clusters(df, cause_column, effect_column, maxclusters = 4)
-    mat = hcat(df[!, cause_column], df[!, effect_column])
-    kresults = [kmeans(mat, cnum) for cnum in 1:maxclusters]
-    plt = plot()
-    for (i, kresult) in enumerate(kresult)
-        # plot each
-        kresult = kmeans(
+function plot_clusters(df, cause_column, effect_column, maxclusters=4)
+    # convert non-numeric columns to numeric ones
+    df1 = deepcopy(df)
+    for s in names(df1)
+        df1[:, s] = tointvec(df1[!, s])
     end
+    factors = collect(Matrix(df1)')
+    zresults = [kmeans(factors, nclust).assignments for nclust in 2:maxclusters]
+    plt = plot(df[!, cause_column], df[!, effect_column], marker_z = zresults,
+        color=:lightrainbow, layout=(maxclusters-1, 1))
+    display(plt)
 end
 
 function plot_by_factor(df, cause_column, effect_column, factor_column)
-      see clustering at kmeans for example on plots  
+    df1 = df[:, [cause_column, effect_column, factor_column]]
+    df1[:, factor_column] = tointvec(df1[!, factor_column])
+    zresult = kmeans(factors, 2).assignments
+    plt = plot(df[!, cause_column], df[!, effect_column], marker_z = zresult, color=:lightrainbow)
+    display(plt)
 end
 
-    
 function simpsons_analysis(df, cause_column, effect_column, show_plots = true)
     get / plot cause effect / slope overall
     plot clusterings
     for each factor, show / plot clustering and print slope, whether has simpsons
 end
-    
-    
-    
+
+
 end  # module Simpsons
