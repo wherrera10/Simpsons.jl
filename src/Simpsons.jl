@@ -60,7 +60,9 @@ end
 
     
 function simpsons_analysis(df, cause_column, effect_column, show_plots = true)
-    
+    get / plot cause effect / slope overall
+    plot clusterings
+    for each factor, show / plot clustering and print slope, whether has simpsons
 end
     
     
