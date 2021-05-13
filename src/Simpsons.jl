@@ -101,13 +101,13 @@ Analyze the dataframe df assuming a cause is in cause_column and an effect in
 effect_column of the dataframe. Output data including and Simpson's paradox type
 reversals in subgroups found. Plots shown if show_plots is true (default).
 """
-function simpsons_analysis(df, cause_column, effect_column, show_plots = true)
+function simpsons_analysis(df, cause_column, effect_column, verbose = true, show_plots = true)
     # Plot cluster analysis for clustering numbers 2 through 5
     show_plots && plot_clusters(df, cause_column, effect_column)
     # plot clusterings by factor
     for factor in filter(f -> !(f in [cause_column, effect_column]), names(df))
         show_plots && plot_kmeans_by_factor(df, cause_column, effect_column, factor)
-        has_simpsons_paradox(df, cause_column, effect_column, factor)
+        has_simpsons_paradox(df, cause_column, effect_column, factor, verbose)
     end
 end
 
