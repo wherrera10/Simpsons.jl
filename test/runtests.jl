@@ -15,6 +15,6 @@ df = DataFrame(Atreatment = [d[1] == "A" ? 1 : 0 for d in data],
 
 result = has_simpsons_paradox(df, :Atreatment, :recovery, :kidney_stone_size, true)
 
-simpsons_analysis(df, :Atreatment, :recovery, false)
+simpsons_analysis(df, :Atreatment, :recovery, false, false)
 
 @test result == true
