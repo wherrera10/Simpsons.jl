@@ -1,5 +1,6 @@
-using Simpsons, DataFrames
+using Simpsons
 using Test
+using DataFrames
 
 # see wikipedia entry at http://en.wikipedia.org/wiki/Simpsons_paradox
 data = vcat(
@@ -12,6 +13,8 @@ df = DataFrame(Atreatment = [d[1] == "A" ? 1 : 0 for d in data],
                recovery = [d[3] for d in data],
                kidney_stone_size = [d[2] for d in data])
 
-result = has_simpsons_paradox(df, :Atreatment, :recovery, :kidney_stone_size, false)
+result = has_simpsons_paradox(df, :Atreatment, :recovery, :kidney_stone_size, true)
+
+simpsons_analysis(df, :Atreatment, :recovery, false)
 
 @test result == true
