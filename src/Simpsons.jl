@@ -1,6 +1,6 @@
 module Simpsons
 
-export has_simpsons_paradox, plot_markov_clusters, plot_kmeans_by_factor, simpsons_analysis
+export has_simpsons_paradox, plot_clusters, plot_kmeans_by_factor, simpsons_analysis
 
 using DataFrames, Polynomials, Clustering, Plots
 
@@ -13,7 +13,7 @@ is not numeric in type. Returns a copy of col if col is numeric in type.
 """
 function tointvec(col::Vector)
     eltype(col) <: Number && return copy(col)
-    d = Dict(d[s] => i for (i, s) in sort(["$x" for x in col]))
+    d = Dict(s => i for (i, s) in enumerate(sort([string(x) for x in unique(col)])))
     return map(s -> d[s], col)
 end
 
@@ -46,6 +46,7 @@ function has_simpsons_paradox(df, cause_column, effect_column, factor_column, ve
         push!(subgroupslopes, gm.coeffs[2])
     end
     if verbose
+        println("For cause $cause_column, effect $effect_column, and factor $factor_column:")
         println("Overall linear trend from cause to effect is ",
             overallslope > 0 ? "positive." : "negative.")
         for (i, slp) in enumerate(subgroupslopes)
@@ -59,22 +60,23 @@ function has_simpsons_paradox(df, cause_column, effect_column, factor_column, ve
 end
 
 """
-    plot_markov_clusters(df, cause_column, effect_column, maxclusters=4)
+    plot_clusters(df, cause_column, effect_column, maxclusters=4)
 
 Plot, with subplots, clustering of the dataframe using caue and effect plotted and
-color coded by clusterings. Use Markv Cluster Algorithm analysis on all fields of
-dataframe. The Markov Cluster algorithm determines the cluster number.
+color coded by clusterings. Use kmeans clustering analysis on all fields of
+dataframe. Use 2 to 5 as cluster number.
 """
-function plot_markov_clusters(df, cause_column, effect_column)
+function plot_clusters(df, cause_column, effect_column)
     # convert non-numeric columns to numeric ones
-    df1 = deepcopy(df)
-    for s in names(df1)
-        df1[:, s] = tointvec(df1[!, s])
-    end
+    d = Dict(s => tointvec(df[!, s]) for s in names(df))
+    df1 = DataFrame(d)
     factors = collect(Matrix(df1)')
-    zresults = mcl(factors).assignments
-    plt = plot(df[!, cause_column], df[!, effect_column], marker_z = zresults,
-        color=:lightrainbow, layout=(maxclusters-1, 1))
+    subplots = Plots.Plot[]
+    for n in 2:5
+        push!(subplots, scatter(df1[!, cause_column], df1[!, effect_column],
+            marker_z = kmeans(factors, n).assignments, color = :lightrainbow))
+    end
+    plt = scatter(subplots..., layout = (2, 2))
     display(plt)
 end
 
@@ -85,10 +87,10 @@ Plot, clustering of the dataframe using cause as X, effect Y, with the factor_co
 used for kmeans clustering into 2 clusters on the plot.
 """
 function plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
-    df1 = df[:, [cause_column, effect_column, factor_column]]
-    df1[:, factor_column] = tointvec(df1[!, factor_column])
-    zresult = kmeans(factors, 2).assignments
-    plt = plot(df[!, cause_column], df[!, effect_column], marker_z = zresult, color=:lightrainbow)
+    df1 = DataFrame(cause_column => df[!, cause_column], effect_column => df[!, effect_column], 
+        factor_column => tointvec(df[!, factor_column]))
+    zresult = kmeans(collect(Matrix(df1)'), 2).assignments
+    plt = scatter(df[!, cause_column], df[!, effect_column], marker_z = zresult, color = :lightrainbow)
     display(plt)
 end
 
@@ -100,11 +102,11 @@ effect_column of the dataframe. Output data including and Simpson's paradox type
 reversals in subgroups found. Plots shown if show_plots is true (default).
 """
 function simpsons_analysis(df, cause_column, effect_column, show_plots = true)
-    # Plot markov cluster analysis
-    plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
+    # Plot cluster analysis for clustering numbers 2 through 5
+    show_plots && plot_clusters(df, cause_column, effect_column)
     # plot clusterings by factor
     for factor in filter(f -> !(f in [cause_column, effect_column]), names(df))
-        plot_kmeans_by_factor(df, cause_column, effect_column, factor)
+        show_plots && plot_kmeans_by_factor(df, cause_column, effect_column, factor)
         has_simpsons_paradox(df, cause_column, effect_column, factor)
     end
 end
