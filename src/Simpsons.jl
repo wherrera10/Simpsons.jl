@@ -49,7 +49,10 @@ function has_simpsons_paradox(df, cause_column, effect_column, factor_column, ve
         println("Overall linear trend from cause to effect is ",
             overallslope > 0 ? "positive." : "negative.")
         for (i, slp) in enumerate(subgroupslopes)
-            println("Subgroup $i trend is ", slp > 0 ? "positive." : "negative.")
+            println("    Subgroup $i trend is ", slp > 0 ? "positive." : "negative.")
+            if sign(slp) != sign(overallslope)
+                println("        This shows a Simpson paradox type reversal.")
+            end
         end
     end
     return any(slp -> slp != overallslope, subgroupslopes)
@@ -107,4 +110,3 @@ function simpsons_analysis(df, cause_column, effect_column, show_plots = true)
 end
 
 end  # module Simpsons
-
