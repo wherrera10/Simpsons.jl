@@ -21,4 +21,4 @@ Clustering = "0.12, 0.13, 0.14, 0.15, 0.16"
 Plots = "0, 1, 2"
 
 [targets]
-test = ["Test", "CSV]
+test = ["Test", "CSV"]
