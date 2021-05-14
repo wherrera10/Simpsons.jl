@@ -1,7 +1,7 @@
 authors = ["William Herrera <wherrera@alahonua.com>"]
 name = "Simpsons"
 uuid = "777baba0-b230-11eb-2c94-4386250cf58f"
-version = "0.0.1"
+version = "0.0.2"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
