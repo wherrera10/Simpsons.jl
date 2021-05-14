@@ -12,10 +12,10 @@ const df = DataFrame(Atreatment = [d[1] == "A" ? 1 : 0 for d in data],
                recovery = [d[3] for d in data],
                kidney_stone_size = [d[2] for d in data])
 
-const result = has_simpsons_paradox(df, :Atreatment, :recovery, :kidney_stone_size, true)
+@test has_simpsons_paradox(df, :Atreatment, :recovery, :kidney_stone_size, true) == true
 
-@test result == true
-
-const pathname = download("https://perso.telecom-paristech.fr/eagan/class/igr204/data/cars.csv")
-const dfc = DataFrame(CSV.File(pathname, datarow=3))
-simpsons_analysis(dfc, :MPG, :Horsepower)
+const pathname = "cars.csv"
+const dfc = DataFrame(CSV.File(pathname, datarow = 3))
+@test has_simpsons_paradox(dfc, :MPG, :Weight, :Cylinders) == true
+@test has_simpsons_paradox(dfc, :MPG, :Weight, :Acceleration) == true
+@test has_simpsons_paradox(dfc, :MPG, :Weight, :Horsepower) == true
