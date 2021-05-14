@@ -74,7 +74,7 @@ used for kmeans clustering into 2 clusters on the plot.
 """
 function plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
     df1 = DataFrame(cause_column => df[!, cause_column], effect_column => df[!, effect_column], 
-        factor_column => tointvec(df[!, factor_column]))
+        factor_column => df[!, factor_column])
     zresult = kmeans(collect(Matrix(df1)'), 2).assignments
     plt = scatter(df[!, cause_column], df[!, effect_column], marker_z = zresult, color = :lightrainbow)
     display(plt)
