@@ -17,19 +17,21 @@ example:
 """
 function has_simpsons_paradox(df, cause_column, effect_column, factor_column, verbose=true)
     # check that the cause and effect column data types are numeric
-    typeof(df[1, cause_column]) <: Number || error("Column $cause_column must be numeric")
-    typeof(df[1, effect_column]) <: Number || error("Column $effect_column must be numeric")
+    df[1, cause_column] isa Number || error("Column $cause_column must be numeric : $(df[1, cause_column])")
+    df[1, effect_column] isa Number || error("Column $effect_column must be numeric")
 
     # Do linear regression on the cause versus effect columns.
     df1 = df[:, [cause_column, effect_column]]
     m = fit(df[!, effect_column], df[!, cause_column], 1)
     overallslope = m.coeffs[2]
 
-    # Group by the factor_column and do a similar linear regression on each group
+    # Group by the factor_column and do a similar linear regression on each group when possible
     grouped = groupby(df, factor_column)
     subgroupslopes = Float64[]
     for (i, gdf) in enumerate(grouped)
+        length(gdf[!, effect_column]) < 2 && continue
         gm = fit(gdf[!, effect_column], gdf[!, cause_column], 1)
+        length(gm.coeffs) < 2 && continue
         push!(subgroupslopes, gm.coeffs[2])
     end
     if verbose
@@ -79,7 +81,7 @@ function plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
         factor_column => df[!, factor_column])
     zresult = kmeans(collect(Matrix(df1)'), 2).assignments
     plt = scatter(df[!, cause_column], df[!, effect_column], marker_z = zresult, color = :lightrainbow,
-        title = "$cause_column -> effect_column with cofactor $factor_column")
+        title = "$cause_column -> $effect_column with cofactor $factor_column")
     display(plt)
 end
 
