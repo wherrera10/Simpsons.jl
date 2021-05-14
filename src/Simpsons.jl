@@ -55,7 +55,7 @@ dataframe. Use 2 to 5 as cluster number. Ignores non-numeric columns.
 """
 function plot_clusters(df, cause_column, effect_column)
     # convert non-numeric columns to numeric ones
-    df1 = df[:, filter(s -> type(df[1, s]) <: Number, names(df))]
+    df1 = df[:, filter(s -> typeof(df[1, s]) <: Number, names(df))]
     factors = collect(Matrix(df1)')
     subplots = Plots.Plot[]
     for n in 2:5
@@ -70,7 +70,7 @@ end
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
 
 Plot, clustering of the dataframe using cause as X, effect Y, with the factor_column
-used for kmeans clustering into 2 clusters on the plot.
+used for kmeans clustering into 2 clusters on the plot. The factor must be numeric.
 """
 function plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
     df1 = DataFrame(cause_column => df[!, cause_column], effect_column => df[!, effect_column], 
@@ -92,7 +92,9 @@ function simpsons_analysis(df, cause_column, effect_column, verbose=true, show_p
     show_plots && plot_clusters(df, cause_column, effect_column)
     # plot clusterings by factor
     for factor in filter(f -> !(f in [cause_column, effect_column]), names(df))
-        show_plots && plot_kmeans_by_factor(df, cause_column, effect_column, factor)
+        if show_plots && typeof(df[1, factor]) <: Number
+            plot_kmeans_by_factor(df, cause_column, effect_column, factor)
+        end
         has_simpsons_paradox(df, cause_column, effect_column, factor, verbose)
     end
 end
