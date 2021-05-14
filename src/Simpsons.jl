@@ -5,13 +5,13 @@ export has_simpsons_paradox, plot_clusters, plot_kmeans_by_factor, simpsons_anal
 using DataFrames, Polynomials, Clustering, Plots
 
 """
-    tointvec(col::Vector)
+    tointvec(col)
 
 Convert the elements of a vector such as a DataFrame column to integers, based on
 their alphabetical order when converted to string. Returns a Vector{Int} if col
 is not numeric in type. Returns a copy of col if col is numeric in type.
 """
-function tointvec(col::Vector)
+function tointvec(col)
     eltype(col) <: Number && return copy(col)
     d = Dict(s => i for (i, s) in enumerate(sort([string(x) for x in unique(col)])))
     return map(s -> d[s], col)
@@ -60,7 +60,7 @@ function has_simpsons_paradox(df, cause_column, effect_column, factor_column, ve
 end
 
 """
-    plot_clusters(df, cause_column, effect_column, maxclusters=4)
+    plot_clusters(df, cause_column, effect_column)
 
 Plot, with subplots, clustering of the dataframe using caue and effect plotted and
 color coded by clusterings. Use kmeans clustering analysis on all fields of
