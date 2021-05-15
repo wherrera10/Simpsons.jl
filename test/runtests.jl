@@ -1,4 +1,4 @@
-using .Simpsons, DataFrames, CSV
+using Simpsons, DataFrames, CSV
 using Test
 
 # see wikipedia entry at http://en.wikipedia.org/wiki/Simpsons_paradox
