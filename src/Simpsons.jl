@@ -15,9 +15,9 @@ example:
         kidney_stone_size = ["small", "small", "large", "small", "large", "large"])
    has_simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
-function has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5, verbose=true)
+function has_simpsons_paradox(df, cause, effect, factr, continuous_threshold=5, verbose=true)
     # check that the cause and effect column data types are numeric
-    df[1, cause] isa Number || error("Column $cause must be numeric : $(df[1, cause_column])")
+    df[1, cause] isa Number || error("Column $cause must be numeric : $(df[1, cause])")
     df[1, effect] isa Number || error("Column $effect must be numeric")
 
     # Do linear regression on the cause versus effect columns.
@@ -26,19 +26,19 @@ function has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5,
     overallslope = m.coeffs[2]
 
     # Group by the factor_column and do a similar linear regression on each group when possible
-    # first check for continous effect type, if number of unique values > continuous_threshold
-    df1 = df[:, [cause, effect, factor]]
-    eff = df1[!, effect]
-    uni = unique(eff)
+    # first check for continous factr type, if number of unique values > continuous_threshold
+    df1 = df[:, [cause, effect, factr]]
+    fac = df1[!, factr]
+    uni = unique(fac)
     if length(uni) >= continuous_threshold
-        groupmat = zeros(eltype(uni), (2, length(eff)))
-        groupmat[1, :] .= eff
+        groupmat = zeros(eltype(uni), (2, length(fac)))
+        groupmat[1, :] .= fac
         kr = kmeans(groupmat, 2)
-        grou = Symbol("grouped" * string(effect))
+        grou = Symbol("grouped" * string(factr))
         df1[:, grou] = kr.assignments
         grouped = groupby(df1, grou)
     else
-        grouped = groupby(df1, factor)
+        grouped = groupby(df1, factr)
     end
     subgroupslopes = Float64[]
     for (i, gdf) in enumerate(grouped)
