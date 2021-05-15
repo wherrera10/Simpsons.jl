@@ -48,7 +48,7 @@ function has_simpsons_paradox(df, cause, effect, factr, continuous_threshold=5, 
         push!(subgroupslopes, gm.coeffs[2])
     end
     if verbose
-        println("For cause $cause, effect $effect, and factor $factor:")
+        println("For cause $cause, effect $effect, and factor $factr:")
         println("Overall linear trend from cause to effect is ",
             overallslope > 0 ? "positive." : "negative.")
     end
