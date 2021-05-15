@@ -17,7 +17,7 @@ example:
 """
 function has_simpsons_paradox(df, cause, effect, factr, continuous_threshold=5, verbose=true)
     # check that the cause and effect column data types are numeric
-    df[1, cause] isa Number || error("Column $cause must be numeric : $(df[1, cause])")
+    df[1, cause] isa Number || error("Column $cause must be numeric")
     df[1, effect] isa Number || error("Column $effect must be numeric")
 
     # Do linear regression on the cause versus effect columns.
