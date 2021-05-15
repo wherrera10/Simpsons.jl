@@ -5,9 +5,9 @@ export has_simpsons_paradox, plot_clusters, plot_kmeans_by_factor, simpsons_anal
 using DataFrames, Polynomials, Clustering, Plots
 
 """
-    has_simpsons_paradox(df, cause_column, effect_column, factor_column, verbose=true)
+    has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5, verbose=true)
 Returns true if the data aggregated by factor exhibits Simpson's paradox.
-Note that the cause_column and effect_column must be numeric in type.
+Note that the cause and effect columns must be numeric in type.
 example:
     df = DataFrame(
         treatment = [1, 2, 1, 1, 2, 2],
@@ -15,7 +15,7 @@ example:
         kidney_stone_size = ["small", "small", "large", "small", "large", "large"])
    has_simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
-function has_simpsons_paradox(df, cause, effect, factr, continuous_threshold=5, verbose=true)
+function has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5, verbose=true)
     # check that the cause and effect column data types are numeric
     df[1, cause] isa Number || error("Column $cause must be numeric")
     df[1, effect] isa Number || error("Column $effect must be numeric")
@@ -25,20 +25,20 @@ function has_simpsons_paradox(df, cause, effect, factr, continuous_threshold=5, 
     m = fit(df[!, effect], df[!, cause], 1)
     overallslope = m.coeffs[2]
 
-    # Group by the factor_column and do a similar linear regression on each group when possible
+    # Group by the factor and do a similar linear regression on each group when possible
     # first check for continous factr type, if number of unique values > continuous_threshold
-    df1 = df[:, [cause, effect, factr]]
-    fac = df1[!, factr]
+    df1 = df[:, [cause, effect, factor]]
+    fac = df1[!, factor]
     uni = unique(fac)
     if length(uni) >= continuous_threshold && uni[1] isa Number
         groupmat = zeros(eltype(uni), (2, length(fac)))
         groupmat[1, :] .= fac
         kr = kmeans(groupmat, 2)
-        grou = Symbol("grouped" * string(factr))
+        grou = Symbol("grouped" * string(factor))
         df1[:, grou] = kr.assignments
         grouped = groupby(df1, grou)
     else
-        grouped = groupby(df1, factr)
+        grouped = groupby(df1, factor)
     end
     subgroupslopes = Float64[]
     for (i, gdf) in enumerate(grouped)
@@ -48,7 +48,7 @@ function has_simpsons_paradox(df, cause, effect, factr, continuous_threshold=5, 
         push!(subgroupslopes, gm.coeffs[2])
     end
     if verbose
-        println("For cause $cause, effect $effect, and factor $factr:")
+        println("For cause $cause, effect $effect, and factor $factor:")
         println("Overall linear trend from cause to effect is ",
             overallslope > 0 ? "positive." : "negative.")
     end
@@ -116,7 +116,7 @@ function simpsons_analysis(df, cause_column, effect_column, verbose=true, show_p
     # plot clusterings by factor
     for factor in filter(f -> !(f in [cause_column, effect_column]), names(df))
         if show_plots && df[1, factor] isa Number
-            plot_kmeans_by_factor(df, cause_column, effect_column, factor)
+            plot_kmeans_by_factor(df, cause_column, effect_column, Symbol(factor))
         end
         has_simpsons_paradox(df, cause_column, effect_column, Symbol(factor), verbose)
     end
