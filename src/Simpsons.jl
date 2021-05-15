@@ -79,7 +79,8 @@ function plot_clusters(df, cause, effect)
     for n in 2:5
         push!(subplots, scatter(df1[!, cause], df1[!, effect],
             marker_z = kmeans(factors, n).assignments, color = :lightrainbow,
-            title = "$cause -> $effect with $n clusters"))
+            title = "$cause -> $effect with $n clusters",
+            xlabel = cause_column, ylabel=effect_column))
     end
     plt = scatter(subplots..., layout = (2, 2))
     display(plt)
@@ -97,7 +98,8 @@ function plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
         factor_column => df[!, factor_column])
     zresult = kmeans(collect(Matrix(df1)'), 2).assignments
     plt = scatter(df[!, cause_column], df[!, effect_column], marker_z = zresult, color = :lightrainbow,
-        title = "$cause_column -> $effect_column with cofactor $factor_column")
+        title = "$cause_column -> $effect_column with cofactor $factor_column",
+        xlabel = cause_column, ylabel=effect_column)
     display(plt)
 end
 
