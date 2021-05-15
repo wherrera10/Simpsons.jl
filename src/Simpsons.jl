@@ -80,7 +80,7 @@ function plot_clusters(df, cause, effect)
         push!(subplots, scatter(df1[!, cause], df1[!, effect],
             marker_z = kmeans(factors, n).assignments, color = :lightrainbow,
             title = "$cause -> $effect with $n clusters",
-            xlabel = cause_column, ylabel=effect_column))
+            xlabel = cause, ylabel=effect))
     end
     plt = scatter(subplots..., layout = (2, 2))
     display(plt)
