@@ -20,4 +20,4 @@ const dfc = DataFrame(CSV.File(pathname, datarow = 3))
 @test has_simpsons_paradox(dfc, :Weight, :MPG, :Acceleration) == false
 @test has_simpsons_paradox(dfc, :Weight, :MPG, :Horsepower) == false
 
-simpsons_analysis(dfc, :MPG, :Horsepower)
+simpsons_analysis(dfc, :Weight, :MPG)
