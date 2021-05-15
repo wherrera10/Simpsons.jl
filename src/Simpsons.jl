@@ -15,55 +15,71 @@ example:
         kidney_stone_size = ["small", "small", "large", "small", "large", "large"])
    has_simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
-function has_simpsons_paradox(df, cause_column, effect_column, factor_column, verbose=true)
+function has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5, verbose=true)
     # check that the cause and effect column data types are numeric
-    df[1, cause_column] isa Number || error("Column $cause_column must be numeric : $(df[1, cause_column])")
-    df[1, effect_column] isa Number || error("Column $effect_column must be numeric")
+    df[1, cause] isa Number || error("Column $cause must be numeric : $(df[1, cause_column])")
+    df[1, effect] isa Number || error("Column $effect must be numeric")
 
     # Do linear regression on the cause versus effect columns.
-    df1 = df[:, [cause_column, effect_column]]
-    m = fit(df[!, effect_column], df[!, cause_column], 1)
+    df1 = df[:, [cause, effect]]
+    m = fit(df[!, effect], df[!, cause], 1)
     overallslope = m.coeffs[2]
 
     # Group by the factor_column and do a similar linear regression on each group when possible
-    grouped = groupby(df, factor_column)
+    # first check for continous effect type, if number of unique values > continuous_threshold
+    df1 = df[:, [cause, effect, factor]]
+    eff = df1[!, effect]
+    uni = unique(eff)
+    if length(uni) >= continuous_threshold
+        groupmat = zeros(eltype(uni), (2, length(eff)))
+        groupmat[1, :] .= eff
+        kr = kmeans(groupmat, 2)
+        grou = Symbol("grouped" * string(effect))
+        df1[:, grou] = kr.assignments
+        grouped = groupby(df1, grou)
+    else
+        grouped = groupby(df1, factor)
+    end
     subgroupslopes = Float64[]
     for (i, gdf) in enumerate(grouped)
-        length(gdf[!, effect_column]) < 2 && continue
-        gm = fit(gdf[!, effect_column], gdf[!, cause_column], 1)
+        length(gdf[!, effect]) < 2 && continue
+        gm = fit(gdf[!, effect], gdf[!, cause], 1)
         length(gm.coeffs) < 2 && continue
         push!(subgroupslopes, gm.coeffs[2])
     end
     if verbose
-        println("For cause $cause_column, effect $effect_column, and factor $factor_column:")
+        println("For cause $cause, effect $effect, and factor $factor:")
         println("Overall linear trend from cause to effect is ",
             overallslope > 0 ? "positive." : "negative.")
-        for (i, slp) in enumerate(subgroupslopes)
-            println("    Subgroup $i trend is ", slp > 0 ? "positive." : "negative.")
-            if sign(slp) != sign(overallslope)
-                println("        This shows a Simpson paradox type reversal.")
-            end
+    end
+    differentslopes = false
+    for (i, slp) in enumerate(subgroupslopes)
+        verbose && println("    Subgroup $i trend is ", slp > 0 ? "positive." : "negative.")
+        if sign(slp) != sign(overallslope)
+            verbose && println("        This shows a Simpson paradox type reversal.")
+            differentslopes = true
         end
     end
-    return any(slp -> slp != overallslope, subgroupslopes)
+    return differentslopes
 end
 
 """
-    plot_clusters(df, cause_column, effect_column)
+    plot_clusters(df, cause, effect)
 
 Plot, with subplots, clustering of the dataframe using cause and effect plotted and
 color coded by clusterings. Use kmeans clustering analysis on all fields of
 dataframe. Use 2 to 5 as cluster number. Ignores non-numeric columns.
 """
-function plot_clusters(df, cause_column, effect_column)
+function plot_clusters(df, cause, effect)
     # convert non-numeric columns to numeric ones
     df1 = df[:, filter(s -> df[1, s] isa Number, names(df))]
 
     factors = collect(Matrix(df1)')
     subplots = Plots.Plot[]
     for n in 2:5
-        push!(subplots, scatter(df1[!, cause_column], df1[!, effect_column],
-            marker_z = kmeans(factors, n).assignments, color = :lightrainbow))
+        push!(subplots, scatter(df1[!, cause], df1[!, effect],
+            marker_z = kmeans(factors, n).assignments, color = :lightrainbow,
+            title = "$cause -> $effect with $n clusters"))
     end
     plt = scatter(subplots..., layout = (2, 2))
     display(plt)
