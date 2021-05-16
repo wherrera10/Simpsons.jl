@@ -6,9 +6,14 @@ using DataFrames, Polynomials, Clustering, Plots
 
 """
     has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5, verbose=true)
+
 Returns true if the data aggregated by factor exhibits Simpson's paradox.
 Note that the cause and effect columns must be numeric in type.
-example:
+A continuous data factor (one with continuous_threshold or more discrete
+levels) will be grouped into a binary factor so as to avoid too many clusters.
+Prints the regression slope directions for overall data and groups if verbose is true.
+
+Example:
     df = DataFrame(
         treatment = [1, 2, 1, 1, 2, 2],
         recovery = [1, 0, 1, 1, 0, 0],
@@ -65,6 +70,7 @@ end
 
 """
     plot_clusters(df, cause, effect)
+
 Plot, with subplots, clustering of the dataframe using cause and effect plotted and
 color coded by clusterings. Use kmeans clustering analysis on all fields of
 dataframe. Use 2 to 5 as cluster number. Ignores non-numeric columns.
@@ -87,6 +93,7 @@ end
 
 """
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
+
 Plot, clustering of the dataframe using cause as X, effect Y, with the factor_column
 used for kmeans clustering into 2 clusters on the plot. The factor must be numeric.
 """
@@ -103,6 +110,7 @@ end
 
 """
     simpsons_analysis(df, cause_column, effect_column, verbose = true, show_plots = true)
+
 Analyze the dataframe df assuming a cause is in cause_column and an effect in
 effect_column of the dataframe. Output data including and Simpson's paradox type
 reversals in subgroups found. Plots shown if show_plots is true (default).
