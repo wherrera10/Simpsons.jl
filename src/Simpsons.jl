@@ -91,7 +91,7 @@ Plot, clustering of the dataframe using cause as X, effect Y, with the factor_co
 used for kmeans clustering into 2 clusters on the plot. The factor must be numeric.
 """
 function plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
-    df[1, factor_column] isa Number || error("error_column must be numeric")
+    df[1, factor_column] isa Number || error("Error: column $factor_column must be numeric")
     df1 = DataFrame(cause_column => df[!, cause_column], effect_column => df[!, effect_column],
         factor_column => df[!, factor_column])
     zresult = kmeans(collect(Matrix(df1)'), 2).assignments
