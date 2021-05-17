@@ -153,7 +153,7 @@ function simpsons_analysis(df, cause_column, effect_column; verbose=true, show_p
         if show_plots && df[1, factor] isa Number
             plot_kmeans_by_factor(df, cause_column, effect_column, factor)
         end
-        has_simpsons_paradox(df, cause_column, effect_column, factor, verbose)
+        has_simpsons_paradox(df, cause_column, effect_column, factor, verbose=verbose)
     end
 end
 
