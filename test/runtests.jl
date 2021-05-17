@@ -23,4 +23,6 @@ const dfc = DataFrame(CSV.File(pathname, datarow = 3))
 Plots.scalefontsizes(0.75)
 simpsons_analysis(dfc, :Weight, :MPG)
 
-simpsons_analysis(make_paradox(), :x, :y)
+dfp = make_paradox()
+simpsons_analysis(dfp, :x, :y)
+@test has_simpsons_paradox(dfp, :x, :y, :z) == true
