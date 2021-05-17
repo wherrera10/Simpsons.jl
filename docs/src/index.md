@@ -1,1 +1,5 @@
+## Functions
 
+```@autodocs
+Modules = [Simpsons]
+```
