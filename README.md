@@ -18,23 +18,25 @@ Prints the regression slope directions for overall data and groups if verbose is
 Analyze the dataframe df assuming a cause is in cause_column and an effect in
 effect_column of the dataframe. Output data including and Simpson's paradox type
 reversals in subgroups found. Plots shown if show_plots is true (default).
+<br><br>
 
     make_paradox(nsubgroups = 3 , N = 16000)
  
 Return a dataframe containing random data in 3 columns :x (cause), :y (effect), and
 :z (cofactor) which displays the Simpson's paradox.
+<br><br>
 
     plot_clusters(df, cause, effect)
     
 Plot, with subplots, clustering of the dataframe using cause and effect plotted and
 color coded by clusterings. Use kmeans clustering analysis on all fields of
 dataframe. Use 2 to 5 as cluster number. Ignores non-numeric columns.
+<br><br>
 
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
     
 Plot, clustering of the dataframe using cause as X, effect Y, with the factor_column
 used for kmeans clustering into 2 clusters on the plot. The factor must be numeric.
-
 
 ### Examples
 
