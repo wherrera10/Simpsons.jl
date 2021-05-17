@@ -2,7 +2,7 @@ module Simpsons
 
 export has_simpsons_paradox, make_paradox, plot_clusters, plot_kmeans_by_factor, simpsons_analysis
 
-using DataFrames, Polynomials, Clustering, Plots
+using DataFrames, Distributions, Polynomials, Clustering, Plots
 
 """
     has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5, verbose=true)
