@@ -65,6 +65,7 @@ function has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5,
             differentslopes = true
         end
     end
+    verbose && println()
     return differentslopes
 end
 
