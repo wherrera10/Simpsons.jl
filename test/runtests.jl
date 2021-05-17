@@ -24,5 +24,5 @@ Plots.scalefontsizes(0.75)
 simpsons_analysis(dfc, :Weight, :MPG,)
 
 dfp = make_paradox()
-simpsons_analysis(dfp, :x, :y)
+simpsons_analysis(dfp, :x, :y, verbose=false)
 @test has_simpsons_paradox(dfp, :x, :y, :z) == true
