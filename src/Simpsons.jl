@@ -75,7 +75,7 @@ end
 Return a dataframe containing random data in 3 columns :x (cause), :y (effect), and
 :z (cofactor) which displays the Simpson's paradox.
 """
-function make_paradox(nsubgroups = 3 , N = 12000, verbose = false)
+function make_paradox(nsubgroups = 3 , N = 12000)
     means = rand(MvNormal([0, 0], 3 .* [1 0.7; 0.7 1]), nsubgroups)
     rweights = rand(nsubgroups)
     weights = rweights ./ sum(rweights)
@@ -94,7 +94,7 @@ function make_paradox(nsubgroups = 3 , N = 12000, verbose = false)
         append!(samples, samp)
     end
     df = DataFrame(samples)
-    return has_simpsons_paradox(df, :x, :y, :z, verbose) ? df : make_paradox()
+    return has_simpsons_paradox(df, :x, :y, :z, false) ? df : make_paradox()
 end
 
 """
