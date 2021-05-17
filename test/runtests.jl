@@ -22,3 +22,5 @@ const dfc = DataFrame(CSV.File(pathname, datarow = 3))
 
 Plots.scalefontsizes(0.75)
 simpsons_analysis(dfc, :Weight, :MPG)
+
+simpsons_analysis(make_paradox(), :x, :y)
