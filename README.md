@@ -47,7 +47,8 @@ used for kmeans clustering into 2 clusters on the plot. The factor must be numer
     #    reverses if the data is split by factor :z.
     has_simpsons_paradox(dfp, :x, :y, :z)  # true with this data
 
-    # analyze with graphs of clustering. To see graphs, run in REPL to prevent premature display closure. 
+    # Analyze with plots made of data clustering. 
+    # To see the plots, run in REPL to prevent premature display closure. 
     simpsons_analysis(dfp, :x, :y, verbose=false)
     
 
