@@ -1,6 +1,6 @@
 module Simpsons
 
-export has_simpsons_paradox, plot_clusters, plot_kmeans_by_factor, simpsons_analysis
+export has_simpsons_paradox, make_paradox, plot_clusters, plot_kmeans_by_factor, simpsons_analysis
 
 using DataFrames, Polynomials, Clustering, Plots
 
@@ -67,6 +67,34 @@ function has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5,
     end
     verbose && println()
     return differentslopes
+end
+
+"""
+    make_paradox(nsubgroups = 3 , N = 12000)
+
+Return a dataframe containing random data in 3 columns :x (cause), :y (effect), and
+:z (cofactor) which displays the Simpson's paradox.
+"""
+function make_paradox(nsubgroups = 3 , N = 12000, verbose = false)
+    means = rand(MvNormal([0, 0], 3 .* [1 0.7; 0.7 1]), nsubgroups)
+    rweights = rand(nsubgroups)
+    weights = rweights ./ sum(rweights)
+    covs = [[1 -c; -c 1] for c in rand(Uniform(0.1, 0.9), nsubgroups)]
+
+    samples = DataFrame(:x => Float64[], :y => Float64[], :z => Int[])
+    for subgroup in 1:nsubgroups
+        n = Int(round(N .* weights[subgroup]))
+        xarr, yarr = Float64[], Float64[]
+        for _ in 1:n
+            x, y = rand(MvNormal(means[:, subgroup], covs[subgroup]), 2)
+            push!(xarr, x)
+            push!(yarr, y)
+        end
+        samp = DataFrame(:x => xarr, :y => yarr, :z => fill(subgroup, n))
+        append!(samples, samp)
+    end
+    df = DataFrame(samples)
+    return has_simpsons_paradox(df, :x, :y, :z, verbose) ? df : make_paradox()
 end
 
 """
