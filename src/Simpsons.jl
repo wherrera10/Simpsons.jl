@@ -5,7 +5,7 @@ export has_simpsons_paradox, make_paradox, plot_clusters, plot_kmeans_by_factor,
 using DataFrames, Distributions, Polynomials, Clustering, Plots
 
 """
-    has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5, verbose=true)
+    has_simpsons_paradox(df, cause, effect, factor; continuous_threshold=5, verbose=true)
 
 Returns true if the data aggregated by factor exhibits Simpson's paradox.
 Note that the cause and effect columns must be numeric in type.
@@ -20,7 +20,7 @@ Example:
         kidney_stone_size = ["small", "small", "large", "small", "large", "large"])
    has_simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
-function has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5, verbose=true)
+function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold=5, verbose=true)
     # check that the cause and effect column data types are numeric
     df[1, cause] isa Number || error("Column $cause must be numeric")
     df[1, effect] isa Number || error("Column $effect must be numeric")
@@ -94,7 +94,7 @@ function make_paradox(nsubgroups = 3 , N = 16000)
         append!(samples, samp)
     end
     df = DataFrame(samples)
-    return has_simpsons_paradox(df, :x, :y, :z, false) ? df : make_paradox()
+    return has_simpsons_paradox(df, :x, :y, :z, verbose=false) ? df : make_paradox()
 end
 
 """
@@ -138,13 +138,13 @@ function plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
 end
 
 """
-    simpsons_analysis(df, cause_column, effect_column, verbose = true, show_plots = true)
+    simpsons_analysis(df, cause_column, effect_column; verbose = true, show_plots = true)
 
 Analyze the dataframe df assuming a cause is in cause_column and an effect in
 effect_column of the dataframe. Output data including and Simpson's paradox type
 reversals in subgroups found. Plots shown if show_plots is true (default).
 """
-function simpsons_analysis(df, cause_column, effect_column, verbose=true, show_plots = true)
+function simpsons_analysis(df, cause_column, effect_column; verbose=true, show_plots = true)
     # Plot cluster analysis for clustering numbers 2 through 5
     show_plots && plot_clusters(df, cause_column, effect_column)
     # plot clusterings by factor
