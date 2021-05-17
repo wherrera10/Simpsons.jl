@@ -1,7 +1,7 @@
-# Simpsons.jl
+## Simpsons.jl
 Julia module to check data for a Simpson's statistical paradox
 
-## Usage
+### Usage
 
     using Simpsons
     
