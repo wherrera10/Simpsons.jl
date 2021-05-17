@@ -12,26 +12,27 @@ exhibits Simpson's paradox. Note that the cause and effect columns must be numer
 A continuous data factor (one with continuous_threshold or more discrete
 levels) will be grouped into a binary factor so as to avoid too many clusters.
 Prints the regression slope directions for overall data and groups if verbose is true.
+<br><br><br>
 
     simpsons_analysis(df, cause_column, effect_column; verbose = true, show_plots = true)
     
 Analyze the dataframe df assuming a cause is in cause_column and an effect in
 effect_column of the dataframe. Output data including and Simpson's paradox type
 reversals in subgroups found. Plots shown if show_plots is true (default).
-<br><br>
+<br><br><br>
 
     make_paradox(nsubgroups = 3 , N = 16000)
  
 Return a dataframe containing random data in 3 columns :x (cause), :y (effect), and
 :z (cofactor) which displays the Simpson's paradox.
-<br><br>
+<br><br><br>
 
     plot_clusters(df, cause, effect)
     
 Plot, with subplots, clustering of the dataframe using cause and effect plotted and
 color coded by clusterings. Use kmeans clustering analysis on all fields of
 dataframe. Use 2 to 5 as cluster number. Ignores non-numeric columns.
-<br><br>
+<br><br><br>
 
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
     
