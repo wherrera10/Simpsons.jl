@@ -27,7 +27,7 @@ function has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5,
 
     # Do linear regression on the cause versus effect columns.
     df1 = df[:, [cause, effect]]
-    m = fit(df[!, effect], df[!, cause], 1)
+    m = Polynomials.fit(df[!, effect], df[!, cause], 1)
     overallslope = m.coeffs[2]
 
     # Group by the factor and do a similar linear regression on each group when possible
