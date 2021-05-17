@@ -48,7 +48,7 @@ function has_simpsons_paradox(df, cause, effect, factor, continuous_threshold=5,
     subgroupslopes = Float64[]
     for (i, gdf) in enumerate(grouped)
         length(gdf[!, effect]) < 2 && continue
-        gm = fit(gdf[!, effect], gdf[!, cause], 1)
+        gm = Polynomials.fit(gdf[!, effect], gdf[!, cause], 1)
         length(gm.coeffs) < 2 && continue
         push!(subgroupslopes, gm.coeffs[2])
     end
