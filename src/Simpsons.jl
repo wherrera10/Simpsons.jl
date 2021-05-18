@@ -94,7 +94,7 @@ function make_paradox(nsubgroups = 3 , N = 16000)
         append!(samples, samp)
     end
     df = DataFrame(samples)
-    return has_simpsons_paradox(df, :x, :y, :z, verbose=false) ? df : make_paradox()
+    return has_simpsons_paradox(df, :x, :y, :z, verbose=false) ? df : make_paradox(nsubgroups, N)
 end
 
 """
