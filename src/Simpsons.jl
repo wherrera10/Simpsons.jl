@@ -76,25 +76,24 @@ Return a dataframe containing random data in 3 columns `:x` (cause), `:y` (effec
 `:z` (cofactor) which displays the Simpson's paradox.
 """
 function make_paradox(nsubgroups = 3 , N = 16000)
-    means = rand(MvNormal([0, 0], 3 .* [1 0.7; 0.7 1]), nsubgroups)
-    rweights = rand(nsubgroups)
-    weights = rweights ./ sum(rweights)
-    covs = [[1 -c; -c 1] for c in rand(Uniform(0.1, 0.9), nsubgroups)]
+    rw = rand(nsubgroups)
+    w = rw ./ sum(rw)
+    m = rand(MvNormal([0, 0], 3 .* [1 0.7; 0.7 1]), nsubgroups)
+    cv = [[1 -c; -c 1] for c in rand(Uniform(0.1, 0.9), nsubgroups)]
 
-    samples = DataFrame(:x => Float64[], :y => Float64[], :z => Int[])
+    dfs = DataFrame(:x => Float64[], :y => Float64[], :z => Int[])
     for subgroup in 1:nsubgroups
-        n = Int(round(N .* weights[subgroup]))
+        subN = Int(round(N .* w[subgroup]))
         xarr, yarr = Float64[], Float64[]
-        for _ in 1:n
-            x, y = rand(MvNormal(means[:, subgroup], covs[subgroup]), 2)
+        for _ in 1:subN
+            x, y = rand(MvNormal(m[:, subgroup], cv[subgroup]), 2)
             push!(xarr, x)
             push!(yarr, y)
         end
-        samp = DataFrame(:x => xarr, :y => yarr, :z => fill(subgroup, n))
-        append!(samples, samp)
+        samp = DataFrame(:x => xarr, :y => yarr, :z => fill(subgroup, subN))
+        append!(dfs, samp)
     end
-    df = DataFrame(samples)
-    return has_simpsons_paradox(df, :x, :y, :z, verbose=false) ? df : make_paradox(nsubgroups, N)
+    return has_simpsons_paradox(dfs, :x, :y, :z, verbose=false) ? dfs : make_paradox(nsubgroups, N)
 end
 
 """
