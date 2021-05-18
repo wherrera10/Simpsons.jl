@@ -23,7 +23,7 @@ first degree slope reversals in subgroups found. Plots shown if `show_plots` is 
 
     make_paradox(nsubgroups = 3 , N = 16000)
  
-Return a dataframe containing `N` points of random data in 3 columns `:x` (cause),
+Return a dataframe containing `N` rows of random data in 3 columns `:x` (cause),
 `:y` (effect), and `:z` (cofactor) which displays the Simpson's paradox.
 <br><br><br>
 
