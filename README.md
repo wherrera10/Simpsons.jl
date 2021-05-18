@@ -5,7 +5,7 @@ Julia module to check data for a Simpson's statistical paradox
 
     using Simpsons
     
-    has_simpsons_paradox(df, cause, effect, factor; continuous_threshold=5, verbose=true)
+    has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, verbose = true)
     
 Returns true if the DataFrame `df`'s `cause` and `effect` column data, as aggregated by `factor`, 
 exhibits Simpson's paradox. Note that the `cause` and `effect` columns must be numeric in type.
@@ -21,7 +21,7 @@ Analyze the dataframe `df` assuming a cause is in `cause_column` and an effect i
 first degree slope reversals in subgroups found. Plots shown if `show_plots` is true (default).
 <br><br><br>
 
-    make_paradox(nsubgroups = 3 , N = 16000)
+    make_paradox(nsubgroups = 3 , N = 8192)
  
 Return a dataframe containing `N` rows of random data in 3 columns `:x` (cause),
 `:y` (effect), and `:z` (cofactor) which displays the Simpson's paradox.
