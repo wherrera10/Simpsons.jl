@@ -5,7 +5,7 @@ export has_simpsons_paradox, make_paradox, plot_clusters, plot_kmeans_by_factor,
 using DataFrames, Distributions, Polynomials, Clustering, Plots
 
 """
-    has_simpsons_paradox(df, cause, effect, factor; continuous_threshold=5, verbose=true)
+    has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, verbose = true)
 
 Returns true if the data aggregated by `factor` exhibits Simpson's paradox.
 Note that the `cause` and `effect` columns must be numeric in type.
@@ -20,7 +20,7 @@ Example:
         kidney_stone_size = ["small", "small", "large", "small", "large", "large"])
     has_simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
-function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold=5, verbose=true)
+function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, verbose = true)
     # check that the cause and effect column data types are numeric
     df[1, cause] isa Number || error("Column $cause must be numeric")
     df[1, effect] isa Number || error("Column $effect must be numeric")
@@ -70,12 +70,12 @@ function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold=5,
 end
 
 """
-    make_paradox(nsubgroups = 3 , N = 16000)
+    make_paradox(nsubgroups = 3 , N = 8192)
 
 Return a dataframe containing `N` rows of random data in 3 columns `:x` (cause), 
 `:y` (effect), and `:z` (cofactor) which displays the Simpson's paradox.
 """
-function make_paradox(nsubgroups = 3 , N = 16000)
+function make_paradox(nsubgroups = 3 , N = 8192)
     rw = rand(nsubgroups)
     w = rw ./ sum(rw)
     m = rand(MvNormal([0, 0], 3 .* [1 0.7; 0.7 1]), nsubgroups)
