@@ -57,7 +57,7 @@ used for kmeans clustering into 2 clusters on the plot. The factor must be numer
 
 ### Installation
 
-Install the package using the package manager (] to enter pkg> mode):
+Install the package using the package manager (Press ] to enter pkg> mode):
 
     (v1) pkg> add Simpsons
 
