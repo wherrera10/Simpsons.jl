@@ -36,7 +36,7 @@ Use 2 to 5 as cluster number. Ignores non-numeric columns.
 
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
     
-Plot, clustering of the dataframe `df` using cause as X, effect Y, with the `factor_column`
+Plot clustering of the dataframe `df` using cause as X, effect Y, with the `factor_column`
 used for kmeans clustering into 2 clusters on the plot. The factor must be numeric.
 
 ### Examples
