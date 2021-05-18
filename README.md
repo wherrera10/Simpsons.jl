@@ -9,7 +9,7 @@ Julia module to check data for a Simpson's statistical paradox
     
 Returns true if the DataFrame `df`'s `cause` and `effect` column data, as aggregated by `factor`, 
 exhibits Simpson's paradox. Note that the `cause` and `effect` columns must be numeric in type.
-A continuous data `factor` (one with continuous_threshold or more discrete
+A continuous data `factor` (one with `continuous_threshold` or more discrete
 levels) will be grouped into a binary factor so as to avoid too many clusters.
 Prints the regression slope directions for overall data and groups if `verbose` is true.
 <br><br><br>
