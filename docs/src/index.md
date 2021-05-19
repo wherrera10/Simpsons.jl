@@ -8,9 +8,8 @@ Julia module to check data for a Simpson's statistical paradox
     has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, verbose = true)
     
 Returns true if the DataFrame `df`'s `cause` and `effect` column data, as aggregated by `factor`, 
-exhibits Simpson's paradox. Note that the `cause` and `effect` columns must be numeric in type.
-A continuous data `factor` (one with `continuous_threshold` or more discrete
-levels) will be grouped into a binary factor so as to avoid too many clusters.
+exhibits Simpson's paradox. A continuous data `factor` (one with `continuous_threshold` or more
+discrete levels) will be grouped into a binary factor so as to avoid too many clusters.
 Prints the regression slope directions for overall data and groups if `verbose` is true.
 <br><br><br>
 
@@ -31,13 +30,13 @@ Return a dataframe containing `N` rows of random data in 3 columns `:x` (cause),
     
 Plot, with subplots, clustering of the dataframe `df` using `cause` and `effect` plotted and
 color coded by clusterings. Use kmeans clustering analysis on all fields of dataframe.
-Use 2 to 5 as cluster number. Ignores non-numeric columns.
+Use 2 to 5 as cluster numbers.
 <br><br><br>
 
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
     
 Plot clustering of the dataframe `df` using cause as X, effect Y, with the `factor_column`
-used for kmeans clustering into 2 clusters on the plot. The factor must be numeric.
+used for kmeans clustering into 2 clusters on the plot.
 
 ### Examples
 
