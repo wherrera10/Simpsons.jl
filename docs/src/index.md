@@ -37,6 +37,8 @@ Use 2 to 5 as cluster numbers.
     
 Plot clustering of the dataframe `df` using cause as X, effect Y, with the `factor_column`
 used for kmeans clustering into 2 clusters on the plot.
+<br><br><br>
+
 
 ### Examples
 
@@ -52,13 +54,15 @@ used for kmeans clustering into 2 clusters on the plot.
     # Analyze with plots made of data clustering. 
     # To see the plots, run in REPL to prevent premature display closure. 
     simpsons_analysis(dfp, :x, :y)
-    
+ <br><br><br>
+ 
 
 ### Installation
 
 Install the package using the package manager (Press ] to enter pkg> mode):
 
     (v1) pkg> add Simpsons
+<br><br><br>
 
 
 ### Functions
