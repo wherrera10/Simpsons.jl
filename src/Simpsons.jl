@@ -6,13 +6,9 @@ using DataFrames, Distributions, Polynomials, Clustering, Plots
 
 """ helper function """
 function _makenumeric(a)
-    d = Dict{eltype(a), Int}()
-    for (i, s) in enumerate(sort(unique(a)))
-        d[s] = i
-    end
+    d = Dict(s => i for (i, s) in enumerate(sort(unique(a))))
     return map(x -> d[x], a)
 end
-
 
 """
     has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, verbose = true)
