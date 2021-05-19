@@ -37,6 +37,8 @@ Use 2 to 5 as cluster numbers.
     
 Plot clustering of the dataframe `df` using cause as X, effect Y, with the `factor_column`
 used for kmeans clustering into 2 clusters on the plot.
+<br><br><br>
+
 
 ### Examples
 
