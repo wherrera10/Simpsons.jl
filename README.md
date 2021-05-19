@@ -1,5 +1,7 @@
 ## Simpsons.jl
 Julia module to check data for a Simpson's statistical paradox
+<br><br>
+
 
 ### Usage
 
@@ -54,7 +56,7 @@ used for kmeans clustering into 2 clusters on the plot.
     # Analyze with plots made of data clustering. 
     # To see the plots, run in REPL to prevent premature display closure. 
     simpsons_analysis(dfp, :x, :y)
-<br><br><br>
+<br><br>
 
 
 ### Installation
