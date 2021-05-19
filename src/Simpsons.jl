@@ -4,14 +4,25 @@ export has_simpsons_paradox, make_paradox, plot_clusters, plot_kmeans_by_factor,
 
 using DataFrames, Distributions, Polynomials, Clustering, Plots
 
+""" helper function """
+function _makenumeric(a)
+    d = Dict{eltype(a), Int}()
+    for (i, s) in enumerate(sort(unique(a)))
+        d[s] = i
+    end
+    return map(x -> d[x], a)
+end
+
+
 """
     has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, verbose = true)
 
 Returns true if the data aggregated by `factor` exhibits Simpson's paradox.
-Note that the `cause` and `effect` columns must be numeric in type.
-A continuous data `factor` column (one with `continuous_threshold` or more discrete
-levels) will be grouped into a binary factor so as to avoid too many clusters.
-Prints the regression slope directions for overall data and groups if verbose is true.
+Note that the `cause` and `effect` columns will be converted to Int columns if
+they are not already numeric in type. A continuous data `factor` column (one
+with `continuous_threshold` or more discrete levels) will be grouped into a
+binary factor so as to avoid too many clusters. Prints the regression slope
+directions for overall data and groups if verbose is true.
 
 Example:
     df = DataFrame(
@@ -21,18 +32,18 @@ Example:
     has_simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
 function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, verbose = true)
-    # check that the cause and effect column data types are numeric
-    df[1, cause] isa Number || error("Column $cause must be numeric")
-    df[1, effect] isa Number || error("Column $effect must be numeric")
+    df1 = DataFrame()
 
+    # Convert cause and effect column data types to numeric if needed
+    df1[:, cause] = (df[1, cause] isa Number ? df[!, cause] : _makenumeric(df[!, cause]))
+    df1[:, effect] = (df[1, effect] isa Number ? df[!, effect] : _makenumeric(df[!, effect]))
+    df1[:, factor] = df[!, factor]
     # Do linear regression on the cause versus effect columns.
-    df1 = df[:, [cause, effect]]
-    m = Polynomials.fit(df[!, effect], df[!, cause], 1)
+    m = Polynomials.fit(df1[!, effect], df1[!, cause], 1)
     overallslope = m.coeffs[2]
 
     # Group by the factor and do a similar linear regression on each group when possible
     # first check for continous factr type, if number of unique values > continuous_threshold
-    df1 = df[:, [cause, effect, factor]]
     fac = df1[!, factor]
     uni = unique(fac)
     if length(uni) >= continuous_threshold && uni[1] isa Number
@@ -99,14 +110,16 @@ end
 """
     plot_clusters(df, cause, effect)
 
-Plot, with subplots, clustering of the dataframe using `cause` (X axis) and `effect` (Y axis) 
+Plot, with subplots, clustering of the dataframe using `cause` (X axis) and `effect` (Y axis)
 plotted and color coded by clusterings. Use kmeans clustering analysis on all fields of
-dataframe. Use 2 to 5 as cluster number. Ignores non-numeric columns.
+dataframe. Use 2 to 5 as cluster number. Converts non-numeric columns to numeric for processing.
 """
 function plot_clusters(df, cause, effect)
     # convert non-numeric columns to numeric ones
-    df1 = df[:, filter(s -> df[1, s] isa Number, names(df))]
-
+    df1 = DataFrame()
+    for nam in names(df)
+        df1[:, nam] = df[1, nam] isa Number ? df[!, nam] : _makenumeric(df[!, nam])
+    end
     factors = collect(Matrix(df1)')
     subplots = Plots.Plot[]
     for n in 2:5
@@ -123,14 +136,13 @@ end
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
 
 Plot clustering of the dataframe using cause plotted as X, effect as Y, with the `factor_column`
-used for kmeans clustering into 2 clusters on the plot. The factor must be numeric.
+used for kmeans clustering into 2 clusters on the plot.
 """
 function plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
-    df[1, factor_column] isa Number || error("Error: column $factor_column must be numeric")
     df1 = DataFrame(cause_column => df[!, cause_column], effect_column => df[!, effect_column],
-        factor_column => df[!, factor_column])
+        factor_column => df[1, factor_column] isa Number ? df[!, factor_column] : _makenumeric(df[!, factor_column]))
     zresult = kmeans(collect(Matrix(df1)'), 2).assignments
-    plt = scatter(df[!, cause_column], df[!, effect_column], marker_z = zresult, color = :lightrainbow,
+    plt = scatter(df1[!, cause_column], df1[!, effect_column], marker_z = zresult, color = :lightrainbow,
         title = "$cause_column -> $effect_column with cofactor $factor_column",
         xlabel = cause_column, ylabel=effect_column)
     display(plt)
