@@ -49,7 +49,7 @@ used for kmeans clustering into 2 clusters on the plot.
     # Create a dataframe with cause :x, effect :y, and cofactor :z columns
     dfp = make_paradox()
     
-    # Test for a Simpson's paradox, where the regression direction :x with :y 
+    # Test for a Simpson's paradox, where the regression direction of :x with :y 
     #    reverses if the data is split by factor :z.
     has_simpsons_paradox(dfp, :x, :y, :z)  # true with this data
 
