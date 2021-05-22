@@ -22,4 +22,7 @@ const dfc = DataFrame(CSV.File(pathname, datarow = 3))
 Plots.scalefontsizes(0.6)
 simpsons_analysis(dfc, :Horsepower, :Acceleration)
 simpsons_analysis(df, :treatment, :recovery)
-simpsons_analysis(make_paradox(), :x, :y)
+
+dfp = make_paradox()
+@test has_simpsons_paradox(dfp, :x, :y, :z) == true
+plot_kmeans_by_factor(dfp, :x, :y, :z)
