@@ -1,7 +1,7 @@
 authors = ["William Herrera <wherrera@alahonua.com>"]
 name = "Simpsons"
 uuid = "777baba0-b230-11eb-2c94-4386250cf58f"
-version = "0.0.2"
+version = "0.1.0"
 
 [deps]
 Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
