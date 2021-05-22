@@ -4,21 +4,16 @@ export has_simpsons_paradox, make_paradox, plot_clusters, plot_kmeans_by_factor,
 
 using DataFrames, Distributions, Polynomials, Clustering, Plots
 
-""" helper function """
-function _makenumeric(a)
-    d = Dict(s => i for (i, s) in enumerate(sort(unique(a))))
-    return map(x -> d[x], a)
-end
-
 """
-    has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, verbose = true)
+    has_simpsons_paradox(df, cause, effect, factor;
+        continuous_threshold = 5, cmax = 5, verbose = true)
 
 Returns true if the data aggregated by `factor` exhibits Simpson's paradox.
 Note that the `cause` and `effect` columns will be converted to Int columns if
 they are not already numeric in type. A continuous data `factor` column (one
 with `continuous_threshold` or more discrete levels) will be grouped into a
-binary factor so as to avoid too many clusters. Prints the regression slope
-directions for overall data and groups if verbose is true.
+at most cmax clusters so as to avoid too many clusters. Prints the regression
+slope directions for overall data and groups if verbose is true.
 
 Example:
     df = DataFrame(
@@ -27,33 +22,42 @@ Example:
         kidney_stone_size = ["small", "small", "large", "small", "large", "large"])
     has_simpsons_paradox(df, :treatment, :recovery, :kidney_stone_size)
 """
-function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, verbose = true)
+function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 5, cmax = 5, verbose = true)
     df1 = DataFrame()
 
     # Convert cause and effect column data types to numeric if needed
     df1[:, cause] = (df[1, cause] isa Number ? df[!, cause] : _makenumeric(df[!, cause]))
     df1[:, effect] = (df[1, effect] isa Number ? df[!, effect] : _makenumeric(df[!, effect]))
-    df1[:, factor] = df[!, factor]
+    if df[1, factor] isa Number || length(unique(df[!, factor])) < continuous_threshold
+        df1[:, factor] = df[!, factor]
+    else
+        df1[:, factor] = _makenumeric(df[!, factor])
+    end
+
     # Do linear regression on the cause versus effect columns.
     m = Polynomials.fit(df1[!, effect], df1[!, cause], 1)
     overallslope = m.coeffs[2]
 
     # Group by the factor and do a similar linear regression on each group when possible
-    # first check for continous factr type, if number of unique values > continuous_threshold
+    # first check for continous factor type, if number of unique values > continuous_threshold
     fac = df1[!, factor]
     uni = unique(fac)
     if length(uni) >= continuous_threshold && uni[1] isa Number
+        # continuous factor, so find best cluster number up to cmax
         groupmat = zeros(eltype(uni), (2, length(fac)))
         groupmat[1, :] .= fac
-        kr = kmeans(groupmat, 2)
+        karray = [kmeans(groupmat, i) for i in 1:cmax+1]
+        x1, y1 = 1, karray[1].totalcost
+        x2, y2 = cmax + 1, karray[cmax + 1].totalcost
+        (_, idx) = findmax(map(i -> distance(x1, y1, x2, y2, i, karray[i].totalcost), 2:cmax))
         grou = Symbol("grouped" * string(factor))
-        df1[:, grou] = kr.assignments
+        insertcols!(df1, grou => karray[idx + 1].assignments)
         grouped = groupby(df1, grou)
     else
         grouped = groupby(df1, factor)
     end
     subgroupslopes = Float64[]
-    for (i, gdf) in enumerate(grouped)
+    for gdf in grouped
         length(gdf[!, effect]) < 2 && continue
         gm = Polynomials.fit(gdf[!, effect], gdf[!, cause], 1)
         length(gm.coeffs) < 2 && continue
@@ -77,12 +81,12 @@ function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 
 end
 
 """
-    make_paradox(nsubgroups = 3 , N = 8192)
+    make_paradox(nsubgroups = 3 , N = 1024)
 
 Return a dataframe containing `N` rows of random data in 3 columns `:x` (cause), 
 `:y` (effect), and `:z` (cofactor) which displays the Simpson's paradox.
 """
-function make_paradox(nsubgroups = 3 , N = 8192)
+function make_paradox(nsubgroups = 3 , N = 1024)
     rw = rand(nsubgroups)
     w = rw ./ sum(rw)
     m = rand(MvNormal([0, 0], 3 .* [1 0.7; 0.7 1]), nsubgroups)
@@ -121,10 +125,10 @@ function plot_clusters(df, cause, effect)
     for n in 2:5
         push!(subplots, scatter(df1[!, cause], df1[!, effect],
             marker_z = kmeans(factors, n).assignments, color = :lightrainbow,
-            title = "$cause -> $effect with $n clusters",
-            xlabel = cause, ylabel=effect))
+            title = "$cause -> $effect with $n clusters", legend = false,
+            xlabel = cause, ylabel = effect, smooths = true))
     end
-    plt = scatter(subplots..., layout = (2, 2))
+    plt = scatter(subplots..., layout = (2, 2), smooths=true)
     display(plt)
 end
 
@@ -132,15 +136,28 @@ end
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
 
 Plot clustering of the dataframe using cause plotted as X, effect as Y, with the `factor_column`
-used for kmeans clustering into 2 clusters on the plot.
+used for kmeans clustering into between 2 and 5 clusters on the plot.
 """
 function plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
     df1 = DataFrame(cause_column => df[!, cause_column], effect_column => df[!, effect_column],
         factor_column => df[1, factor_column] isa Number ? df[!, factor_column] : _makenumeric(df[!, factor_column]))
-    zresult = kmeans(collect(Matrix(df1)'), 2).assignments
-    plt = scatter(df1[!, cause_column], df1[!, effect_column], marker_z = zresult, color = :lightrainbow,
+    fac = df1[!, factor_column]
+    uni = unique(fac)
+    groupmat = zeros(eltype(uni), (2, length(fac)))
+    groupmat[1, :] .= fac
+    karray = [kmeans(groupmat, i) for i in 1:6]
+    x1, y1 = 1, karray[1].totalcost
+    x2, y2 = 6, karray[6].totalcost
+    (_, idx) = findmax(map(i -> distance(x1, y1, x2, y2, i, karray[i].totalcost), 2:5))
+    grou = Symbol("grouped" * string(factor_column))
+    df1[:, grou] = karray[idx + 1].assignments
+    groups = groupby(df1, grou)
+    plt = scatter(df1[!, cause_column], df[!, effect_column], color = :black, smooth = true,
         title = "$cause_column -> $effect_column with cofactor $factor_column",
-        xlabel = cause_column, ylabel=effect_column)
+        xlabel = cause_column, ylabel = effect_column, legend = false)
+    for (i, gf) in enumerate(groups)
+        scatter!(plt, gf[!, cause_column], gf[!, effect_column], color = _pcolor(i), smooth = true, legend = false)
+    end
     display(plt)
 end
 
@@ -163,5 +180,24 @@ function simpsons_analysis(df, cause_column, effect_column; verbose=true, show_p
         has_simpsons_paradox(df, cause_column, effect_column, factor, verbose=verbose)
     end
 end
+
+
+# internal helper functions
+
+""" Make a column numeric """
+function _makenumeric(a)
+    d = Dict{eltype(a), Int}()
+    for (i, s) in enumerate(sort(unique(a)))
+        d[s] = i
+    end
+    return map(x -> d[x], a)
+end
+
+""" distance point p = [x0, y0] to line (L1 = [x1, y1], L2 = [x2, y2]), 2D """
+function distance(x1, y1, x2, y2, x0, y0)
+    return abs((x2 - x1) * (y1 - y0) - (x1 - x0) * (y2 - y1)) / sqrt((x2 - x1)^2 + (y2 - y1)^2)
+end
+
+_pcolor(i) = collect(palette(:lightrainbow))[mod1(i, 6)]
 
 end  # module Simpsons
