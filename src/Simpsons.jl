@@ -186,10 +186,10 @@ Returns a tuple: the cluster count and the KmeansResult at the "elbow" optimum.
 function find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax = 5)
     allkmeans = [kmeans(dataarray, i) for i in 1:cmax+1]
     alltotals = map(x -> x.totalcost, allkmeans)
-    cidx, totalsmin = findmin(alltotals)
+    totalsmin, cidx = findmin(alltotals)
     x1, y1 = 1, alltotals[1]
     x2, y2 = cmax + 1, alltotals[cmax + 1]
-    (_, idx) = findmax(map(i -> distance(x1, y1, x2, y2, i, alltotals[i]), 2:cmax))
+    _, idx = findmax(map(i -> distance(x1, y1, x2, y2, i, alltotals[i]), 2:cmax))
     nclust = cidx < idx + 1 ? max(cmin, cidx) : idx + 1
     return nclust, allkmeans[nclust]
 end
