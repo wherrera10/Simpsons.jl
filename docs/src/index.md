@@ -44,7 +44,7 @@ Plot clustering of the dataframe using cause plotted as X, effect as Y, with the
 used for kmeans clustering into between 2 and 5 clusters on the plot.
 <br><br><br>
 
-    find_clustering_elbow(dataarray, cmin = 1, cmax = 5)
+    find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax = 5; fclust = kmeans, kwargs...)
 
 Find the "elbow" of the totalcost versus cluster number curve, where
 cmin <= elbow <= cmax. Note that in pathological cases where the actual
