@@ -181,7 +181,7 @@ minimum of the totalcosts occurs at a cluster count less than that of the
 curve "elbow", the function will return either cmin or the actual cluster
 count at which the totalcost is at minimum, whichever is larger.
 <br>
-Returns a tuple: the cluster count and the KmeansResult at the optimum.
+Returns a tuple: the cluster count and the KmeansResult at the "elbow" optimum.
 """
 function find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax = 5)
     allkmeans = [kmeans(dataarray, i) for i in 1:cmax+1]
