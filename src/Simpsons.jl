@@ -174,6 +174,7 @@ end
 
 """
     find_clustering_elbow(dataarray, cmin = 1, cmax = 5)
+    
 Find the "elbow" of the totalcost versus cluster number curve, where
 cmin <= elbow <= cmax. Note that in pathological cases where the actual
 minimum of the totalcosts occurs at a cluster count less than that of the
