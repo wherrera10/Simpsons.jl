@@ -173,8 +173,8 @@ function simpsons_analysis(df, cause_column, effect_column; verbose=true, show_p
 end
 
 """
-    find_clustering_elbow(dataarray, cmin = 1, cmax = 5)
-    
+    find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax = 5; fclust = kmeans, kwargs...)
+
 Find the "elbow" of the totalcost versus cluster number curve, where
 cmin <= elbow <= cmax. Note that in pathological cases where the actual
 minimum of the totalcosts occurs at a cluster count less than that of the
@@ -193,7 +193,6 @@ function find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax
     nclust = cidx < idx + 1 ? max(cmin, cidx) : idx + 1
     return nclust, allkmeans[nclust]
 end
-
 
 
 # internal helper functions
