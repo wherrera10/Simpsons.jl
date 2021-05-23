@@ -7,14 +7,12 @@ using DataFrames, Distributions, Polynomials, Clustering, Plots
 """
     has_simpsons_paradox(df, cause, effect, factor;
         continuous_threshold = 5, cmax = 5, verbose = true)
-
 Returns true if the data aggregated by `factor` exhibits Simpson's paradox.
 Note that the `cause` and `effect` columns will be converted to Int columns if
 they are not already numeric in type. A continuous data `factor` column (one
 with `continuous_threshold` or more discrete levels) will be grouped into a
 at most cmax clusters so as to avoid too many clusters. Prints the regression
 slope directions for overall data and groups if verbose is true.
-
 Example:
     df = DataFrame(
         treatment = [1, 2, 1, 1, 2, 2],
@@ -46,12 +44,9 @@ function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 
         # continuous factor, so find best cluster number up to cmax
         groupmat = zeros(eltype(uni), (2, length(fac)))
         groupmat[1, :] .= fac
-        karray = [kmeans(groupmat, i) for i in 1:cmax+1]
-        x1, y1 = 1, karray[1].totalcost
-        x2, y2 = cmax + 1, karray[cmax + 1].totalcost
-        (_, idx) = findmax(map(i -> distance(x1, y1, x2, y2, i, karray[i].totalcost), 2:cmax))
+        _, kmclust = find_clustering_elbow(groupmat, 2, cmax)
         grou = Symbol("grouped" * string(factor))
-        insertcols!(df1, grou => karray[idx + 1].assignments)
+        insertcols!(df1, grou => kmclust.assignments)
         grouped = groupby(df1, grou)
     else
         grouped = groupby(df1, factor)
@@ -82,7 +77,6 @@ end
 
 """
     make_paradox(nsubgroups = 3 , N = 1024)
-
 Return a dataframe containing `N` rows of random data in 3 columns `:x` (cause), 
 `:y` (effect), and `:z` (cofactor) which displays the Simpson's paradox.
 """
@@ -109,7 +103,6 @@ end
 
 """
     plot_clusters(df, cause, effect)
-
 Plot, with subplots, clustering of the dataframe using `cause` (X axis) and `effect` (Y axis)
 plotted and color coded by clusterings. Use kmeans clustering analysis on all fields of
 dataframe. Use 2 to 5 as cluster number. Converts non-numeric columns to numeric for processing.
@@ -134,7 +127,6 @@ end
 
 """
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
-
 Plot clustering of the dataframe using cause plotted as X, effect as Y, with the `factor_column`
 used for kmeans clustering into between 2 and 5 clusters on the plot.
 """
@@ -163,7 +155,6 @@ end
 
 """
     simpsons_analysis(df, cause_column, effect_column; verbose = true, show_plots = true)
-
 Analyze the dataframe `df` assuming a cause is in `cause_column` and an effect in
 `effect_column` of the dataframe. Output data including any Simpson's paradox type
 reversals in subgroups found. Plots shown if show_plots is true (default).
@@ -179,6 +170,28 @@ function simpsons_analysis(df, cause_column, effect_column; verbose=true, show_p
         end
         has_simpsons_paradox(df, cause_column, effect_column, factor, verbose=verbose)
     end
+end
+
+"""
+    find_clustering_elbow(dataarray, cmin = 1, cmax = 5)
+
+Find the "elbow" of the totalcost versus cluster number curve, where
+cmin <= elbow <= cmax. Note that in pathological cases where the actual
+minimum of the totalcosts occurs at a cluster count less than that of the
+curve "elbow", the function will return either cmin or the actual cluster
+count at which the totalcost is at minimum, whichever is larger.
+<br>
+Returns a tuple: the cluster count and the KmeansResult at the optimum.
+"""
+function find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax = 5)
+    allkmeans = [kmeans(dataarray, i) for i in 1:cmax+1]
+    alltotals = map(x -> x.totalcost, allkmeans)
+    cidx, totalsmin = findmin(alltotals)
+    x1, y1 = 1, alltotals[1]
+    x2, y2 = cmax + 1, alltotals[cmax + 1]
+    (_, idx) = findmax(map(i -> distance(x1, y1, x2, y2, i, alltotals[i]), 2:cmax))
+    nclust = cidx < idx + 1 ? max(cmin, cidx) : idx + 1
+    return nclust, allkmeans[nclust]
 end
 
 
