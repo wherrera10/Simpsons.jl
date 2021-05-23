@@ -52,7 +52,7 @@ minimum of the totalcosts occurs at a cluster count less than that of the
 curve "elbow", the function will return either `cmin` or the actual cluster
 count at which the totalcost is at minimum, whichever is larger.
 <br>
-Returns a tuple: the cluster count and the `KmeansResult` at the "elbow" optimum.
+Returns a tuple: the cluster count and the `ClusteringResult` at the "elbow" optimum.
 <br><br><br>
 
 
