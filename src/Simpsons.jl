@@ -174,25 +174,25 @@ end
 
 """
     find_clustering_elbow(dataarray, cmin = 1, cmax = 5)
-
 Find the "elbow" of the totalcost versus cluster number curve, where
 cmin <= elbow <= cmax. Note that in pathological cases where the actual
 minimum of the totalcosts occurs at a cluster count less than that of the
 curve "elbow", the function will return either cmin or the actual cluster
 count at which the totalcost is at minimum, whichever is larger.
 <br>
-Returns a tuple: the cluster count and the KmeansResult at the "elbow" optimum.
+Returns a tuple: the cluster count and the ClusteringResult at the "elbow" optimum.
 """
-function find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax = 5, cfunc = kmeans)
-    allkmeans = [cfunc(dataarray, i) for i in 1:cmax+1]
+function find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax = 5; fclust = kmeans, kwargs...)
+    allkmeans = [fclust(dataarray, i, kwargs...) for i in 1:cmax+1]
     alltotals = map(x -> x.totalcost, allkmeans)
-    totalsmin, cidx = findmin(alltotals)
+    _, cidx = findmin(alltotals)
     x1, y1 = 1, alltotals[1]
     x2, y2 = cmax + 1, alltotals[cmax + 1]
     _, idx = findmax(map(i -> distance(x1, y1, x2, y2, i, alltotals[i]), 2:cmax))
     nclust = cidx < idx + 1 ? max(cmin, cidx) : idx + 1
     return nclust, allkmeans[nclust]
 end
+
 
 
 # internal helper functions
@@ -214,3 +214,4 @@ end
 _pcolor(i) = collect(palette(:lightrainbow))[mod1(i, 6)]
 
 end  # module Simpsons
+
