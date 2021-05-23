@@ -68,16 +68,16 @@ function has_simpsons_paradox(df, cause, effect, factor; continuous_threshold = 
         println("Overall linear trend from cause to effect is ",
             overallslope > 0 ? "positive." : "negative.")
     end
-    differentslopes = false
+    differentslopesigns = false
     for (i, slp) in enumerate(subgroupslopes)
         verbose && println("    Subgroup $i trend is ", slp > 0 ? "positive." : "negative.")
         if sign(slp) != sign(overallslope)
             verbose && println("        This shows a Simpson paradox type reversal.")
-            differentslopes = true
+            differentslopesigns = true
         end
     end
     verbose && println()
-    return differentslopes
+    return differentslopesigns
 end
 
 """
