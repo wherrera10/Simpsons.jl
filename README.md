@@ -13,8 +13,8 @@ Returns true if the data in DataFrame `df` aggregated by `factor` exhibits
 Simpson's paradox. Note that the `cause` and `effect` columns will be converted
 to Int columns if they are not already numeric in type. A continuous data
 `factor` column (one with `continuous_threshold` or more discrete levels) will
-be grouped into at most cmax clusters so as to avoid too many clusters. Prints
-the regression slope directions for overall data and groups if verbose is true.
+be grouped into at most `cmax` clusters so as to avoid too many clusters. Prints
+the regression slope directions for overall data and groups if `verbose` is true.
 <br><br><br>
 
     simpsons_analysis(df, cause_column, effect_column; verbose = true, show_plots = true)
