@@ -43,6 +43,17 @@ Plot clustering of the dataframe using cause plotted as X, effect as Y, with the
 used for kmeans clustering into between 2 and 5 clusters on the plot.
 <br><br><br>
 
+    find_clustering_elbow(dataarray, cmin = 1, cmax = 5)
+
+Find the "elbow" of the totalcost versus cluster number curve, where
+`cmin` <= elbow <= `cmax`. Note that in pathological cases where the actual
+minimum of the totalcosts occurs at a cluster count less than that of the
+curve "elbow", the function will return either `cmin` or the actual cluster
+count at which the totalcost is at minimum, whichever is larger.
+<br>
+Returns a tuple: the cluster count and the `KmeansResult` at the "elbow" optimum.
+<br><br><br>
+
 
 ### Examples
 
