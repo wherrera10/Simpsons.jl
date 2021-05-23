@@ -2,6 +2,7 @@
 Julia module to check data for a Simpson's statistical paradox
 <br><br>
 
+https://github.com/wherrera10/Simpsons.jl/blob/main/docs/src/simpsons_example.svg
 
 ### Usage
 
