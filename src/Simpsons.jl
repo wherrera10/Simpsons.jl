@@ -183,8 +183,8 @@ count at which the totalcost is at minimum, whichever is larger.
 <br>
 Returns a tuple: the cluster count and the KmeansResult at the "elbow" optimum.
 """
-function find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax = 5)
-    allkmeans = [kmeans(dataarray, i) for i in 1:cmax+1]
+function find_clustering_elbow(dataarray::AbstractMatrix{<:Real}, cmin = 1, cmax = 5, cfunc = kmeans)
+    allkmeans = [cfunc(dataarray, i) for i in 1:cmax+1]
     alltotals = map(x -> x.totalcost, allkmeans)
     totalsmin, cidx = findmin(alltotals)
     x1, y1 = 1, alltotals[1]
