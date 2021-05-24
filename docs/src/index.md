@@ -50,7 +50,11 @@ Find the "elbow" of the totalcost versus cluster number curve, where
 cmin <= elbow <= cmax. Note that in pathological cases where the actual
 minimum of the totalcosts occurs at a cluster count less than that of the
 curve "elbow", the function will return either cmin or the actual cluster
-count at which the totalcost is at minimum, whichever is larger.
+count at which the totalcost is at minimum, whichever is larger. The default
+clustering function is kmeans, but other functions which take two required 
+arguments (a matrix of data plus a desired cluster number and return a
+ClusteringResult as defined in the Clustering package) may be used. Additional
+arguments will be passed to the fclust function as kwargs.
 <br>
 Returns a tuple: the cluster count and the ClusteringResult at the "elbow" optimum.
 <br><br><br>
