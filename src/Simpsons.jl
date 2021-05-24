@@ -7,6 +7,7 @@ using DataFrames, Distributions, Polynomials, Clustering, Plots
 """
     has_simpsons_paradox(df, cause, effect, factor;
         continuous_threshold = 5, cmax = 5, verbose = true)
+
 Returns true if the data aggregated by `factor` exhibits Simpson's paradox.
 Note that the `cause` and `effect` columns will be converted to Int columns if
 they are not already numeric in type. A continuous data `factor` column (one
@@ -77,6 +78,7 @@ end
 
 """
     make_paradox(nsubgroups = 3 , N = 1024)
+
 Return a dataframe containing `N` rows of random data in 3 columns `:x` (cause), 
 `:y` (effect), and `:z` (cofactor) which displays the Simpson's paradox.
 """
@@ -103,6 +105,7 @@ end
 
 """
     plot_clusters(df, cause, effect)
+
 Plot, with subplots, clustering of the dataframe using `cause` (X axis) and `effect` (Y axis)
 plotted and color coded by clusterings. Use kmeans clustering analysis on all fields of
 dataframe. Use 2 to 5 as cluster number. Converts non-numeric columns to numeric for processing.
@@ -127,6 +130,7 @@ end
 
 """
     plot_kmeans_by_factor(df, cause_column, effect_column, factor_column)
+
 Plot clustering of the dataframe using cause plotted as X, effect as Y, with the `factor_column`
 used for kmeans clustering into between 2 and 5 clusters on the plot.
 """
@@ -155,6 +159,7 @@ end
 
 """
     simpsons_analysis(df, cause_column, effect_column; verbose = true, show_plots = true)
+
 Analyze the dataframe `df` assuming a cause is in `cause_column` and an effect in
 `effect_column` of the dataframe. Output data including any Simpson's paradox type
 reversals in subgroups found. Plots shown if show_plots is true (default).
@@ -179,7 +184,10 @@ Find the "elbow" of the totalcost versus cluster number curve, where
 cmin <= elbow <= cmax. Note that in pathological cases where the actual
 minimum of the totalcosts occurs at a cluster count less than that of the
 curve "elbow", the function will return either cmin or the actual cluster
-count at which the totalcost is at minimum, whichever is larger.
+count at which the totalcost is at minimum, whichever is larger. The default
+clustering function is kmeans, but other functions which take two required 
+aguments, a matrix of data plus a desired cluster number and return a
+ClusteringResult as defined in the Clustering package may be used.
 <br>
 Returns a tuple: the cluster count and the ClusteringResult at the "elbow" optimum.
 """
