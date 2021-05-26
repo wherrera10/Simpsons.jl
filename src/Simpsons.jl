@@ -205,7 +205,13 @@ end
 
 # internal helper functions
 
-""" Make a column numeric """
+
+"""
+    _makenumeric(a)
+
+Returns an array of counting number integers, `1 <= values <= length(a)`,
+where the returned array has its shape and sort order the same as `a`.
+"""
 function _makenumeric(a)
     d = Dict{eltype(a), Int}()
     for (i, s) in enumerate(sort(unique(a)))
@@ -214,12 +220,18 @@ function _makenumeric(a)
     return map(x -> d[x], a)
 end
 
-""" distance point p = [x0, y0] to line (L1 = [x1, y1], L2 = [x2, y2]), 2D """
+"""
+    distance(x1, y1, x2, y2, x0, y0)
+
+Return the Euclidean distance from point at `[x0, y0]` to line from `[x1, y1]` to `[x2, y2]`)
+"""
 function distance(x1, y1, x2, y2, x0, y0)
     return abs((x2 - x1) * (y1 - y0) - (x1 - x0) * (y2 - y1)) / sqrt((x2 - x1)^2 + (y2 - y1)^2)
 end
 
+""" get one of 6 colors by an index """
 _pcolor(i) = collect(palette(:lightrainbow))[mod1(i, 6)]
+
 
 end  # module Simpsons
 
