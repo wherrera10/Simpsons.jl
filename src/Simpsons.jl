@@ -1,3 +1,4 @@
+""" Julia module to check data for a Simpson's statistical paradox """
 module Simpsons
 
 export has_simpsons_paradox, make_paradox, plot_clusters, plot_kmeans_by_factor, simpsons_analysis
