@@ -1,4 +1,7 @@
 ## Simpsons.jl
+
+[![CI](https://github.com/wherrera10/Simpsons.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/wherrera10/Simpsons.jl/actions/workflows/ci.yml)
+
 Julia module to check data for a Simpson's statistical paradox
 <br><br>
 
